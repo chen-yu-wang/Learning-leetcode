@@ -209,3 +209,43 @@ RARP将MAC地址转为IP地址
 **四次挥手**
 
 <img src="https://pic.leetcode-cn.com/1612459478-ajInIu-%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png" alt="四次挥手.png" style="zoom: 50%;" />
+
+①首先client向server发送FIN报文表明要释放TCP链接
+
+​	标志位FIN ，表示请求释放
+
+​	序列号seq = u
+
+​	随后客户端进入FIN-WAIT-1阶段
+
+②server收到FIN包后，结束ESTABLISHED阶段，进入CLOSE-WAIT阶段并返回ACK包
+
+​	标志位ACK，表示收到了客户端释放链接的请求
+
+​	序列号seq = v
+
+​	确认号ack = u+1
+
+​	随后服务端开始准备释放服务端到客户端方向的连接
+
+客户端收到服务端的ACK包后，结束FIN-WAIT-1阶段，进入FIN-WAIT-2阶段
+
+③服务器端发送ACK包后，会等待遗留数据传输完毕后，再向client发送一段FIN ACK包：
+	标志位FIN ACK，表示做好释放链接的准备
+
+​	序号seq = w
+
+​	确认号ack = u+1
+
+​	随后，server会结束CLOSE-WAIT阶段，进入LAST-ACK阶段，并停止发送数据
+
+④client收到FIN ACK包后，确认服务器做好了释放链接的准备，便结束FIN-WAIT-2阶段，进入TIME-WAIT阶段，并向服务器发送ACK包
+
+​	标志位ACK，表示收到了服务器准备好释放链接的信号
+
+​	序列号seq = u+1
+
+​	确认号 ack = w+1
+
+**随后客户端在TIME--WAIT阶段等待2MSL**，而服务器端收到客户端的FIN ACK之后便进入CLOSED阶段，正式关闭服务器端到客户端方向的连接。待客户端等待完2MSL后，结束TIME-WAIT，进入CLOSED阶段。
+
