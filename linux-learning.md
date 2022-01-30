@@ -551,7 +551,7 @@ IDE硬盘的表示方法一样。
 
 ​			-c 列出明细的同时，增加汇总值
 
- 			--max-depth=1 子目录深度 
+​			--max-depth=1 子目录深度 
 
 #### Linux磁盘实用指令举例
 
@@ -570,3 +570,29 @@ IDE硬盘的表示方法一样。
 ​	4) 统计/opt 文件夹下目录的个数，包括子文件夹里的	 ls -lR /opt | grep "^d" | wc -l 
 
 ​	5) 以树状显示目录结构 tree 目录 	tree /home/
+
+
+
+### Linux网络配置
+
+#### Linux网络环境配置之自动获取
+
+​	DHCP,	登陆后，通过界面的来设置自动获取 ip，特点：linux 启动后会自动获取 IP,缺点是每次自动获取的 ip 地址可 能不一样
+
+#### Linux网络环境配置之指定IP
+
+​	直接修改配置文件来指定 IP,并可以连接到外网
+
+​	编辑 vi /etc/sysconfig/network-scripts/ifcfg-ens33
+
+```
+	BOOTPROTO=static
+	#IP地址
+	IPADDR=192.168.200.130
+	#网关
+	GATEWAY=192.168.200.2
+	#域名解析器
+	DNS1=192.168.200.2
+```
+
+​	重启网络服务或者重启系统生效 	service network restart 
