@@ -10,7 +10,7 @@ Linux一切皆文件
 
 ​	/lib，开机所需的最基本的动态链接库，几乎所有应用都需要用到它
 
-​	/ home为存放普通用户的主目录，内含已创建的所有用户的ID命名的目录
+​	/home为存放普通用户的主目录，内含已创建的所有用户的ID命名的目录
 
 ​	/bin目录，常用的指令放在bin下 
 
@@ -116,7 +116,7 @@ Linux一切皆文件
 
 ​	useradd 用户名 添加用户，默认该用户的家目录在/home/用户名
 
-​	userad  -d 用户目录  用户名， 此命令可以指定用户目录的文件夹名，默认是与用户名相同
+​	useradd  -d 用户目录  用户名， 此命令可以指定用户目录的文件夹名，默认是与用户名相同
 
 #### 指定/修改密码
 
@@ -676,3 +676,127 @@ IDE硬盘的表示方法一样。
 ​			-p	显示进程的PID
 
 ​			-u	显示进程的所属用户
+
+
+
+### Linux服务管理
+
+#### Linux服务介绍
+
+​	服务(service) 本质就是进程，但是是运行在后台的，通常都会监听某个端口，等待其它程序的请求，比如(mysqld , sshd 防火墙等)，因此我们又称为守护进程
+
+#### service管理指令
+
+​	service 服务名 [start | stop | restart | reload | status]	（启动|停止|重启|重载|查看状态）
+
+​	Centos7 之后**多用systemctl而不是service**
+
+​	setup 命令可以查看服务名
+
+#### 服务运行级别
+
+​	Linux 系统有 7 种运行级别(runlevel)：常用的是级别 3 和 5 运行级别 
+
+​		0：系统停机状态，系统默认运行级别不能设为 0，否则不能正常启动 运行级别 
+
+​		1：单用户工作状态，root 权限，用于系统维护，禁止远程登陆 运行级别 
+
+​		2：多用户状态(没有 NFS)，不支持网络 运行级别 
+
+​		3：完全的多用户状态(有 NFS)，无界面，登陆后进入控制台命令行模式 运行级别 
+
+​		4：系统未使用，保留 运行级别 
+
+​		5：X11 控制台，登陆后进入图形 GUI 模式 运行级别 
+
+​		6：系统正常关闭并重启，默认运行级别不能设为 6，否则不能正常启
+
+​	**查看当前运行级别：**	systemctl get-default
+
+​	更改运行级别：	systemctl set-default TARGET.target
+
+#### chkconfig命令
+
+​	chkconfig命令可以给服务的各个运行级别设置自启动/关闭
+
+​	chkconfig 指令管理的服务在 /etc/init.d 查看	(centos7之后的服务大多用systemctl)
+
+​	基本语法：
+
+​				查看服务 chkconfig --list [| grep xxx] 				chkconfig 服务名 --list 
+
+​				在级别5打开关闭服务	chkconfig --level 5 服务名 on/off
+
+​	重新设置服务后需要重启
+
+#### systemctl管理指令
+
+​	基本语法： systemctl [start | stop | restart | status] 服务名
+
+​	这里的start和stop都只是**临时生效**，要想永久改变，则需要用systemctl enable
+
+#### systemctl 设置服务的自启动状态
+
+​	systemctl list-unit-files [ | grep 服务名] (查看服务开机启动状态, grep 可以进行过滤) 
+
+​	systemctl enable 服务名 (设置服务开机启动) 
+
+​	systemctl disable 服务名 (关闭服务开机启动) 
+
+​	systemctl is-enabled 服务名 (查询某个服务是否是自启动的)
+
+#### firewall防火墙指令
+
+​	打开端口: firewall-cmd --permanent --add-port=端口号/协议 
+
+​	关闭端口: firewall-cmd --permanent --remove-port=端口号/协议 
+
+​	以上两操作需要**重新载入**,才能生效 : firewall-cmd --reload 
+
+​	查询端口是否开放: firewall-cmd --query-port=端口/协议
+
+​	**netatat -anp | more 	可以查看端口对应的网络协议**
+
+
+
+### Linux动态监控进程
+
+#### top命令
+
+​	top 与 ps 命令很相似。它们都用来显示正在执行的进程。Top 与 ps 最大的不同之处，在于 **top 在执行一段时间可以 更新正在运行的的进程**，命令如下：
+
+​	top [选项]
+
+​			-d 秒数	指定top每隔几秒更新，默认3秒
+
+​			-i 	使top不显示任何闲置或僵死进程
+
+​			-p	通过指定监控进程ID来仅仅监控某个进程的状态
+
+![image-20220204165628778](pic\image-20220204165628778.png)
+
+​	交互操作命令：
+
+​			P	按照CPU使用率排序，默认就是此项
+
+​			M   按内存使用率排序
+
+​			N   按PID排序
+
+​			q   退出
+
+​			u	按回车后输入用户名，即可监视指定用户
+
+​			k    按回车后再输入进程ID，再输入9，即可杀死指定进程
+
+
+
+### Linux监控网络状态
+
+#### netstat命令
+
+​	netstat [选项]
+
+​			-an	按一定顺序排列输出
+
+​			-p	 显示哪个进程在调用
